@@ -1,0 +1,44 @@
+# cluster.yaml
+# kind创建容器内k8s集群
+kind: Cluster
+name: demo-cluster-01
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  #  disableDefaultCNI: true # 禁用默认 CNI
+  podSubnet: "10.1.0.0/16" # Pod CIDR
+nodes:
+- role: control-plane # 节点角色
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-ip: 10.0.1.1 # 节点 IP
+        node-labels: "rack=rack0" # 节点标签
+
+- role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-ip: 10.0.1.2
+        node-labels: "rack=rack0"
+
+- role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-ip: 10.0.1.3
+        node-labels: "rack=rack1"
+
+- role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-ip: 10.0.1.4
+        node-labels: "rack=rack1"
